@@ -15,7 +15,7 @@ describe Endpointer do
 
     it 'passes the list of command line options to the parser' do
       expect(argument_parser).to receive(:parse).with(command_line_arguments)
-      Endpointer.run command_line_arguments
+      described_class.run command_line_arguments
     end
 
     xit 'runs the relevant actions based on the commands' do
