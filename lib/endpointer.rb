@@ -1,5 +1,11 @@
 require "endpointer/version"
+require "endpointer/argument_parser"
 
 module Endpointer
-  # Your code goes here...
+
+  def self.run(arguments)
+    ArgumentParser.new.parse(arguments)
+
+
+  end
 end
