@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'endpointer/command'
 
 describe Endpointer::ArgumentParser do
   describe'#parse'do
@@ -9,8 +10,8 @@ describe Endpointer::ArgumentParser do
     end
 
     it 'only returns command classes' do
-      expect(subject.parse(command_line_arguments).first).to be_a(Command)
-      expect(subject.parse(command_line_arguments).last).to be_a(Command)
+      expect(subject.parse(command_line_arguments).first).to be_a(Endpointer::Command)
+      expect(subject.parse(command_line_arguments).last).to be_a(Endpointer::Command)
     end
   end
 end

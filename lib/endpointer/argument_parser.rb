@@ -1,4 +1,5 @@
-require 'endpointer/command'
+require 'endpointer/action_command'
+require 'endpointer/file_command'
 
 module Endpointer
   class ArgumentParser
