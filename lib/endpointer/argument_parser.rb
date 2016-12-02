@@ -17,11 +17,11 @@ module Endpointer
       return ActionCommand.new(argument) if action_command?(argument)
     end
 
-    def file_command?(argument)
+    def action_command?(argument)
       argument.match(/^--.*/)
     end
 
-    def action_command?(argument)
+    def file_command?(argument)
       argument.match(/.json$/) || File.exists?(argument)
     end
 
