@@ -10,7 +10,7 @@ module Endpointer
 
     def parse_resources
       parse_config(config_file).map do |resource|
-        Resource.new(resource["url"], resource["headers"])
+        Resource.new(resource["method"].to_sym, resource["url"], resource["headers"])
       end
     end
 

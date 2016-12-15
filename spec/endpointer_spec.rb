@@ -8,8 +8,8 @@ describe Endpointer do
   describe '.run' do
     let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
     let(:argument_parser) { double(Endpointer::ArgumentParser) }
-    let(:resource1) { Endpointer::Resource.new("http://example.com/foo", ["Authorization: Bearer foo"]) }
-    let(:resource2) { Endpointer::Resource.new("http://example.com/bar", ["Authorization: Bearer bar"]) }
+    let(:resource1) { Endpointer::Resource.new }
+    let(:resource2) { Endpointer::Resource.new }
     let(:resources) { [resource1, resource2] }
     let(:options) { Endpointer::Options.new(invalidate: true) }
     let(:app_creator) { double(:app_creator) }
