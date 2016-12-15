@@ -1,12 +1,11 @@
 require 'spec_helper'
-require 'endpointer/command'
 
 describe Endpointer::ArgumentParser do
   describe'#parse'do
     let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
 
     before do
-      allow(Endpointer::ActionCommand).to receive(:new).and_return(:action_cmd)
+      allow(Endpointer::ActionCommandFactory).to receive(:create).and_return(:action_cmd)
       allow(Endpointer::FileCommand).to receive(:new).and_return(:file_cmd)
     end
     it 'creates commands depending on each recognized argument' do

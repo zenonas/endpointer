@@ -1,4 +1,4 @@
-require 'endpointer/action_command'
+require 'endpointer/action_command_factory'
 require 'endpointer/file_command'
 
 module Endpointer
@@ -14,7 +14,7 @@ module Endpointer
 
     def parse_argument(argument)
       return FileCommand.new(argument) if file_command?(argument)
-      return ActionCommand.new(argument) if action_command?(argument)
+      return ActionCommandFactory.create(argument) if action_command?(argument)
     end
 
     def action_command?(argument)

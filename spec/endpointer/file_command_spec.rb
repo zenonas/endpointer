@@ -23,10 +23,5 @@ describe Endpointer::FileCommand do
       subject = described_class.new tempfile.path
       expect(subject.file['foo']).to eq 'bar'
     end
-
-    it 'sets the file? to true' do
-      subject = described_class.new tempfile.path
-      expect(subject.file?).to be_truthy
-    end
   end
 end
