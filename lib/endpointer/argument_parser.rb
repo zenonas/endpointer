@@ -1,27 +1,47 @@
-require 'endpointer/action_command_factory'
-require 'endpointer/file_command'
+require 'endpointer/resource'
+require 'endpointer/options'
 
 module Endpointer
   class ArgumentParser
 
-    def parse(arguments)
-      arguments.flat_map do |argument|
-        parse_argument(argument)
+    def initialize(arguments)
+      @arguments = arguments
+    end
+
+    def parse_resources
+      parse_config(config_file).map do |resource|
+        Resource.new(resource["url"], resource["headers"])
       end
+    end
+
+    def parse_options
+      options = @arguments.select { |argument| option_argument?(argument)}
+      build_options_from(options)
     end
 
     private
 
-    def parse_argument(argument)
-      return FileCommand.new(argument) if file_command?(argument)
-      return ActionCommandFactory.create(argument) if action_command?(argument)
+    def build_options_from(parsed_options)
+      invalidate = parsed_options.include?("--invalidate")
+      Options.new(invalidate)
     end
 
-    def action_command?(argument)
+    def config_file
+      @arguments.find { |argument| config_file?(argument) }
+    end
+
+    def parse_config(config_file)
+      JSON.parse(File.read(config_file))
+    end
+
+    def resources_from_config_file
+    end
+
+    def option_argument?(argument)
       argument.match(/^--.*/)
     end
 
-    def file_command?(argument)
+    def config_file?(argument)
       argument.match(/.json$/) || File.exists?(argument)
     end
 

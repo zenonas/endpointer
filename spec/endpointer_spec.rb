@@ -8,27 +8,30 @@ describe Endpointer do
   describe '.run' do
     let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
     let(:argument_parser) { double(Endpointer::ArgumentParser) }
-    let(:command1) { Endpointer::ActionCommands::FakeAction.new }
-    let(:command2) { double(Endpointer::FileCommand) }
-    let(:commands) { [command1, command2] }
+    let(:resource1) { Endpointer::Resource.new("http://example.com/foo", ["Authorization: Bearer foo"]) }
+    let(:resource2) { Endpointer::Resource.new("http://example.com/bar", ["Authorization: Bearer bar"]) }
+    let(:resources) { [resource1, resource2] }
+    let(:options) { Endpointer::Options.new(invalidate: true) }
+    let(:app_creator) { double(:app_creator) }
+    let(:app) { double(:app) }
 
     before do
-      allow(Endpointer::ArgumentParser).to receive(:new).and_return(argument_parser)
-      allow(argument_parser).to receive(:parse).and_return(commands)
+      allow(Endpointer::ArgumentParser).to receive(:new).with(command_line_arguments).and_return(argument_parser)
+      allow(argument_parser).to receive(:parse_resources).and_return(resources)
+      allow(argument_parser).to receive(:parse_options).and_return(options)
+      allow(Endpointer::AppCreator).to receive(:new).and_return(app_creator)
+      allow(app_creator).to receive(:create).and_return(app)
+      allow(app).to receive(:run!)
     end
 
-    it 'passes the list of command line options to the parser' do
-      expect(argument_parser).to receive(:parse).with(command_line_arguments)
+    it 'creates a dynamic sinatra app based on the resources and options' do
+      expect(app_creator).to receive(:create).with(resources, options)
       described_class.run command_line_arguments
     end
 
-    it 'runs the relevant action commands based on the commands' do
-      expect(command1).to receive(:run)
+    it 'runs the app' do
+      expect(app).to receive(:run!)
       described_class.run command_line_arguments
     end
   end
-end
-
-class Endpointer::ActionCommands::FakeAction < Endpointer::ActionCommand
-  def run; end
 end

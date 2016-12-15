@@ -1,20 +1,52 @@
 require 'spec_helper'
+require 'tempfile'
+require 'json'
 
 describe Endpointer::ArgumentParser do
-  describe'#parse'do
-    let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
+  let(:tempfile) { Tempfile.new }
+  let(:command_line_arguments) { ['--invalidate', tempfile.path] }
+
+  subject { Endpointer::ArgumentParser.new(command_line_arguments) }
+
+  let(:url1) { "http://example.com/foo" }
+  let(:url2) { "http://example.com/bar" }
+  let(:header1) { "Authorization: Bearer foo" }
+  let(:header2) { "Authorization: Bearer bar" }
+
+  describe'#parse_resources'do
+    let(:config) do
+      [
+        {
+          url: url1,
+          headers: [header1]
+        },
+        {
+          url: url2,
+          headers: [header2]
+        }
+      ]
+    end
 
     before do
-      allow(Endpointer::ActionCommandFactory).to receive(:create).and_return(:action_cmd)
-      allow(Endpointer::FileCommand).to receive(:new).and_return(:file_cmd)
-    end
-    it 'creates commands depending on each recognized argument' do
-      expect(subject.parse(command_line_arguments).count).to eq(2)
+      File.write(tempfile.path, JSON.generate(config))
     end
 
-    it 'only returns the correct commands' do
-      expect(subject.parse(command_line_arguments).first).to eq(:action_cmd)
-      expect(subject.parse(command_line_arguments).last).to eq(:file_cmd)
+    it 'provides a list of resources' do
+      expect(subject.parse_resources.count).to eq(2)
+      expect(subject.parse_resources.first.url).to eq(url1)
+      expect(subject.parse_resources.first.headers).to eq([header1])
+      expect(subject.parse_resources.last.url).to eq(url2)
+      expect(subject.parse_resources.last.headers).to eq([header2])
     end
+  end
+
+  describe "#parse_options" do
+    it 'returns the correctly configured options' do
+      expect(subject.parse_options.invalidate).to be_truthy
+    end
+  end
+
+  after do
+    tempfile.delete
   end
 end
