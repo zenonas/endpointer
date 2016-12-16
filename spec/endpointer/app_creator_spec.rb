@@ -36,6 +36,6 @@ end
 
 class Endpointer::ResourceExecutorStub < Endpointer::ResourceExecutor
   def perform(request, resource, options)
-    Endpointer::Response.new(request.path, resource.headers)
+    Endpointer::Response.new(200, request.path, resource.headers)
   end
 end
