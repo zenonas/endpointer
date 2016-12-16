@@ -5,7 +5,8 @@ module Endpointer
   class PerformerFactory
 
     PERFORMERS = {
-      get: Endpointer::Performers::Get
+      get: Endpointer::Performers::Get,
+      post: Endpointer::Performers::Post
     }
 
     def self.create(method)

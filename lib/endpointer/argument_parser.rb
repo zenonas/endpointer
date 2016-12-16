@@ -1,5 +1,6 @@
 require 'endpointer/resource'
 require 'endpointer/options'
+require 'json'
 
 module Endpointer
   class ArgumentParser

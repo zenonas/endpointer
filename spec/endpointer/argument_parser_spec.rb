@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'tempfile'
-require 'json'
 
 describe Endpointer::ArgumentParser do
   let(:tempfile) { Tempfile.new }
