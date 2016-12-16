@@ -10,7 +10,7 @@ describe Endpointer::Performers::Get do
   end
   let(:request) { double(:request, env: headers, path: URI.parse(url).path) }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
-  let(:resource) { Endpointer::Resource.new(:get, url, headers) }
+  let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
 
 
   let(:expected_response_body) { 'some response' }

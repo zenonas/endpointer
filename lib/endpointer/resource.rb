@@ -1,4 +1,4 @@
 module Endpointer
-  class Resource < Struct.new(:method, :url, :headers)
+  class Resource < Struct.new(:id, :method, :url, :headers)
   end
 end

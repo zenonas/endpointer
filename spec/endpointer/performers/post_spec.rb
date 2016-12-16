@@ -10,7 +10,7 @@ describe Endpointer::Performers::Post do
   let(:request) { double(:request, env: headers, path: URI.parse(url).path, body: request_body) }
   let(:request_body) { double(:body, string: "{\"foo\":\"bar\"}") }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
-  let(:resource) { Endpointer::Resource.new(:post, url, headers) }
+  let(:resource) { Endpointer::Resource.new("resource", :post, url, headers) }
   let(:expected_response_body) { 'some response' }
 
   let(:expected_response_headers) { { 'CONTENT-TYPE' => 'application/json' } }

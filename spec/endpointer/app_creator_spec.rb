@@ -7,8 +7,8 @@ describe Endpointer::AppCreator do
   let(:url1) { "http://example.com/foo" }
   let(:url2) { "http://example.com/bar" }
   let(:invalidate) { true }
-  let(:resource1) { Endpointer::Resource.new(:get, url1, {'Authorization' => 'Bearer bar'}) }
-  let(:resource2) { Endpointer::Resource.new(:post, url2, {}) }
+  let(:resource1) { Endpointer::Resource.new("resource1", :get, url1, {'Authorization' => 'Bearer bar'}) }
+  let(:resource2) { Endpointer::Resource.new("resource2", :post, url2, {}) }
   let(:resources) { [resource1, resource2] }
   let(:options) { Endpointer::Options.new(invalidate) }
 

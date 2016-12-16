@@ -7,6 +7,8 @@ describe Endpointer::ArgumentParser do
 
   subject { Endpointer::ArgumentParser.new(command_line_arguments) }
 
+  let(:id1) { 'foo' }
+  let(:id2) { 'bar' }
   let(:url1) { "http://example.com/foo" }
   let(:url2) { "http://example.com/bar" }
   let(:header1) { { "Authorization" => "Bearer foo" } }
@@ -16,11 +18,13 @@ describe Endpointer::ArgumentParser do
     let(:config) do
       [
         {
+          id: id1,
           method: :get,
           url: url1,
           headers: header1
         },
         {
+          id: id2,
           method: :post,
           url: url2,
           headers: header2
@@ -34,9 +38,11 @@ describe Endpointer::ArgumentParser do
 
     it 'provides a list of resources' do
       expect(subject.parse_resources.count).to eq(2)
+      expect(subject.parse_resources.first.id).to eq(id1)
       expect(subject.parse_resources.first.method).to eq(:get)
       expect(subject.parse_resources.first.url).to eq(url1)
       expect(subject.parse_resources.first.headers).to eq(header1)
+      expect(subject.parse_resources.last.id).to eq(id2)
       expect(subject.parse_resources.last.method).to eq(:post)
       expect(subject.parse_resources.last.url).to eq(url2)
       expect(subject.parse_resources.last.headers).to eq(header2)

@@ -4,7 +4,7 @@ describe Endpointer::ResourceExecutor do
   let(:url) { "http://example.com/foo" }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
   let(:options) { Endpointer::Options.new(true) }
-  let(:resource) { Endpointer::Resource.new(:get, url, headers) }
+  let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
 
   let(:request) { double(:request) }
 
