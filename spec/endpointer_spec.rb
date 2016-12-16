@@ -11,7 +11,7 @@ describe Endpointer do
     let(:resource1) { Endpointer::Resource.new }
     let(:resource2) { Endpointer::Resource.new }
     let(:resources) { [resource1, resource2] }
-    let(:options) { Endpointer::Options.new(invalidate: true) }
+    let(:options) { Endpointer::Options.new(invalidate: false) }
     let(:app_creator) { double(:app_creator) }
     let(:app) { double(:app) }
 

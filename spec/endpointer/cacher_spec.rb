@@ -44,7 +44,40 @@ describe Endpointer::Cacher do
           }.to raise_error(Endpointer::Errors::CachedItemNotFoundError)
       end
     end
+  end
 
+  describe '#set' do
+    context 'when the cache dir doesnt exist' do
+      before do
+        FileUtils.remove_entry(tempdir)
+      end
+
+      it 'creates it' do
+        described_class.new(tempdir)
+        expect(File.exists?(tempdir)).to be_truthy
+      end
+    end
+
+    context 'when the cache dir exists' do
+      it 'stores the response in the cache dir as a yaml dump' do
+        subject.set(resource, response)
+        cached_response = YAML.load(File.read(File.join(tempdir, "#{resource.id}.yml")))
+        expect(cached_response.response).to eq(response)
+      end
+    end
+  end
+
+  describe '#invalidate' do
+
+    before do
+      FileUtils.touch(File.join(tempdir, "test1"))
+    end
+
+    it 'deletes the contents of the cache dir' do
+      subject.invalidate
+      expect(Dir.glob(File.join(tempdir, '*'))).to be_empty
+      expect(File.exists?(tempdir)).to be_truthy
+    end
   end
 
   after do

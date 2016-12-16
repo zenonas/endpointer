@@ -40,4 +40,3 @@ describe Endpointer::ResourceExecutor do
     end
   end
 end
-
