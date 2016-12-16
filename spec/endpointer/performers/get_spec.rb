@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'uri'
 
 describe Endpointer::Performers::Get do
   let(:url) { "http://example.com/foo" }
@@ -7,7 +8,7 @@ describe Endpointer::Performers::Get do
       'Authorization' => 'Bearer expected'
     }
   end
-  let(:request) { double(:request, env: headers, path: url) }
+  let(:request) { double(:request, env: headers, path: URI.parse(url).path) }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
   let(:resource) { Endpointer::Resource.new(:get, url, headers) }
 
