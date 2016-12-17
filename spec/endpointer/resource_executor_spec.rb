@@ -13,7 +13,7 @@ describe Endpointer::ResourceExecutor do
   let(:performer) { double(:performer) }
 
   before do
-    allow(Endpointer::Cacher).to receive(:new).and_return(cacher)
+    allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
     allow(Endpointer::PerformerFactory).to receive(:create).with(:get).and_return(performer)
   end
 
@@ -31,11 +31,17 @@ describe Endpointer::ResourceExecutor do
     context 'the cache doesnt have the resource' do
       before do
         allow(cacher).to receive(:get).with(resource).and_raise(Endpointer::Errors::CachedItemNotFoundError)
+        allow(cacher).to receive(:set).with(resource, response)
         allow(performer).to receive(:execute).with(request, resource).and_return(response)
       end
 
       it 'uses the performer factory' do
         expect(subject.perform(request, resource, options)).to eq response
+      end
+
+      it 'stores the response in the cache' do
+        expect(cacher).to receive(:set).with(resource, response)
+        subject.perform(request, resource, options)
       end
     end
   end
