@@ -11,9 +11,10 @@ describe Endpointer do
     let(:resource1) { Endpointer::Resource.new }
     let(:resource2) { Endpointer::Resource.new }
     let(:resources) { [resource1, resource2] }
-    let(:options) { Endpointer::Options.new(invalidate: false) }
+    let(:options) { Endpointer::Options.new(false) }
     let(:app_creator) { double(:app_creator) }
     let(:app) { double(:app) }
+    let(:cacher) { double(:cacher) }
 
     before do
       allow(Endpointer::ArgumentParser).to receive(:new).with(command_line_arguments).and_return(argument_parser)
@@ -21,6 +22,7 @@ describe Endpointer do
       allow(argument_parser).to receive(:parse_options).and_return(options)
       allow(Endpointer::AppCreator).to receive(:new).and_return(app_creator)
       allow(app_creator).to receive(:create).and_return(app)
+      allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
       allow(app).to receive(:run!)
     end
 
@@ -32,6 +34,19 @@ describe Endpointer do
     it 'runs the app' do
       expect(app).to receive(:run!)
       described_class.run command_line_arguments
+    end
+
+    context 'if the cache is to be invalidated' do
+      let(:options) { Endpointer::Options.new(true) }
+
+      before do
+        allow(cacher).to receive(:invalidate)
+      end
+
+      it 'invalidates the cache if the option is selected' do
+        expect(cacher).to receive(:invalidate)
+        described_class.run command_line_arguments
+      end
     end
   end
 end

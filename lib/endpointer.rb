@@ -8,7 +8,9 @@ module Endpointer
 
   def self.run(arguments)
     argument_parser = ArgumentParser.new(arguments)
-    app = AppCreator.new.create(argument_parser.parse_resources, argument_parser.parse_options)
+    options = argument_parser.parse_options
+    Cacher.new(CACHE_DIR).invalidate if options.invalidate
+    app = AppCreator.new.create(argument_parser.parse_resources, options)
     app.run!
   end
 end
