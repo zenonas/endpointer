@@ -6,7 +6,6 @@ module Endpointer
     class Method
 
       def execute(request, resource)
-        Endpointer::Response.new
       end
 
       private
