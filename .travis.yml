@@ -9,3 +9,4 @@ rvm:
 - jruby-9.1.6.0
 script:
 - bundle exec rake
+- bundle exec codeclimate-test-reporter
