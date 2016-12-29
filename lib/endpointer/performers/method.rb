@@ -12,8 +12,16 @@ module Endpointer
 
       def create_headers(request, resource)
         resource.headers.keys.each_with_object({}) do |key, header|
-          header[key] = request.env[key] || resource.headers[key]
+          header[key] = request_header_or_default(key, request, resource)
         end
+      end
+
+      def request_header_or_default(key, request, resource)
+        request.env[rack_header_name_convert(key)] || resource.headers[key]
+      end
+
+      def rack_header_name_convert(header_name)
+        "HTTP_#{header_name.upcase.tr('-', '_')}"
       end
 
       def create_hostname(resource)

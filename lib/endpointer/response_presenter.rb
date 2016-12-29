@@ -5,7 +5,7 @@ module Endpointer
       Response.new(
         status,
         body,
-        uglify_headers(headers)
+        sanitise_headers(uglify_headers(headers))
       )
     end
 
@@ -15,6 +15,12 @@ module Endpointer
       headers.inject({}) { |out, (key, value)|
         out[key.to_s.upcase.gsub('_', '-')] = value
         out
+      }
+    end
+
+    def sanitise_headers(headers)
+      headers.reject {|header, value|
+        header.match(/TRANSFER-ENCODING/)
       }
     end
 

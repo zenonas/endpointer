@@ -5,7 +5,8 @@ describe Endpointer::ResponsePresenter do
   let(:headers) do
     {
       content_type: 'application/json',
-      x_some_value: 'value'
+      x_some_value: 'value',
+      transfer_encoding: 'chunked'
     }
 
   end
@@ -23,7 +24,7 @@ describe Endpointer::ResponsePresenter do
   end
 
   describe '#present' do
-    it 'makes the headers sinatra friendly' do
+    it 'makes the headers sinatra friendly and removes unwanted headers' do
       expect(subject.present(status: status, headers: headers, body: body)).to eq(expected_response)
     end
   end

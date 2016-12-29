@@ -15,14 +15,6 @@ module Endpointer
         end
         Endpointer::ResponsePresenter.new.present(status: response.code, body: response.body, headers: response.headers)
       end
-
-      private
-
-      def create_headers(request, resource)
-        resource.headers.keys.each_with_object({}) do |key, header|
-          header[key] = request.env[key] || resource.headers[key]
-        end
-      end
     end
   end
 end
