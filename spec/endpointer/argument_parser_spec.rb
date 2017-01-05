@@ -55,6 +55,31 @@ describe Endpointer::ArgumentParser do
     end
   end
 
+  describe "#validate_arguments" do
+    context "when the arguments are valid" do
+      it "returns true" do
+        expect(subject.valid?).to be_truthy
+      end
+    end
+
+    context "when all arguments are invalid" do
+      let(:command_line_arguments) { ['--something'] }
+
+      it "returns false" do
+        expect(subject.valid?).to be_falsey
+      end
+    end
+
+    context "when some arguemnts are invalid" do
+      let(:command_line_arguments) { ['--invalid', tempfile.path] }
+
+      it "returns false" do
+        expect(subject.valid?).to be_falsey
+      end
+
+    end
+  end
+
   after do
     tempfile.delete
   end
