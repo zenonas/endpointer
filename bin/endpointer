@@ -3,4 +3,9 @@
 require "bundler/setup"
 require "endpointer"
 
-Endpointer.run ARGV
+begin
+  Endpointer.run ARGV
+rescue Endpointer::Errors::InvalidArgumentsError
+  STDERR.puts "Usage: endpointer [--invalidate] <path_to_json_config>.json"
+  exit 1
+end
