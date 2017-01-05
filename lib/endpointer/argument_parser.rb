@@ -5,6 +5,10 @@ require 'json'
 module Endpointer
   class ArgumentParser
 
+    VALID_OPTIONS = {
+      '--invalidate' => true
+    }
+
     def initialize(arguments)
       @arguments = arguments
     end
@@ -20,6 +24,12 @@ module Endpointer
       build_options_from(options)
     end
 
+    def valid?
+      return false unless config_file
+      return false unless (@arguments - VALID_OPTIONS.keys).size ==  1
+      true
+    end
+
     private
 
     def build_options_from(parsed_options)
@@ -33,9 +43,6 @@ module Endpointer
 
     def parse_config(config_file)
       JSON.parse(File.read(config_file))
-    end
-
-    def resources_from_config_file
     end
 
     def option_argument?(argument)
