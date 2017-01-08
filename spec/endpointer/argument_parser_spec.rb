@@ -13,6 +13,7 @@ describe Endpointer::ArgumentParser do
   let(:url2) { "http://example.com/bar" }
   let(:header1) { { "Authorization" => "Bearer foo" } }
   let(:header2) { { "Authorization" => "Bearer bar" } }
+  let(:cache_path) { '/some/path' }
 
   describe'#parse_resources'do
     let(:config) do
@@ -50,13 +51,25 @@ describe Endpointer::ArgumentParser do
   end
 
   describe "#parse_options" do
-    it 'returns the correctly configured options' do
-      expect(subject.parse_options.invalidate).to be_truthy
+    context 'cache-dir option' do
+      let(:command_line_arguments) { ["--cache-dir=#{cache_path}", tempfile.path] }
+
+      it 'sets the cache dir to the specified dir' do
+        expect(subject.parse_options.cache_dir).to eq(cache_path)
+      end
+    end
+
+    context 'invalidate' do
+      it 'returns the correctly configured options' do
+        expect(subject.parse_options.invalidate).to be_truthy
+      end
     end
   end
 
   describe "#validate_arguments" do
     context "when the arguments are valid" do
+      let(:command_line_arguments) { ["--cache-dir=#{cache_path}", tempfile.path] }
+
       it "returns true" do
         expect(subject.valid?).to be_truthy
       end
