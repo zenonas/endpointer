@@ -8,9 +8,15 @@ module Endpointer
       include Endpointer::Performers::Method
 
       def execute(request, resource)
+        execute_method(resource.method, request, resource)
+      end
+
+      private
+
+      def execute_method(method, request, resource)
         begin
           url = File.join(create_hostname(resource), create_path(request))
-          response = RestClient.post(
+          response = RestClient.send(method,
             url,
             request.body.string,
             create_headers(request, resource)
