@@ -90,8 +90,8 @@ As mentioned above I'm actively going to work on improving endpointer and the fo
 * Custom cache path
 * The ability to easily edit cached files. Maybe a second executable that allows you to edit the canned responses in a pretty JSON format
 * A `--debug` flag to the command line that will give a pry window on every request allowing you to play with the Request and Response objects.
-* The ability to run headless on a service to make this a deployable fake web service
 * Configurable port
+* Support multiple key/value stores for caching. Currently only uses local YAML files. One Suggestion is Redis support.
 
 ## License
 
