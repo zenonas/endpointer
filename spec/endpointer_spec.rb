@@ -22,7 +22,7 @@ describe Endpointer do
     allow(argument_parser).to receive(:valid?).and_return(true)
     allow(Endpointer::AppCreator).to receive(:new).and_return(app_creator)
     allow(app_creator).to receive(:create).and_return(app)
-    allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
+    allow(Endpointer::Cacher).to receive(:new).with(options.cache_dir).and_return(cacher)
     allow(app).to receive(:run!)
   end
 
