@@ -4,7 +4,8 @@ require 'rest-client'
 
 module Endpointer
   module Performers
-    class Get < Method
+    class Get
+      include Endpointer::Performers::Method
 
       def execute(request, resource)
         begin

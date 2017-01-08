@@ -4,7 +4,9 @@ require 'rest-client'
 
 module Endpointer
   module Performers
-    class Post < Method
+    class Post
+      include Endpointer::Performers::Method
+
       def execute(request, resource)
         begin
           url = File.join(create_hostname(resource), create_path(request))
