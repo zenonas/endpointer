@@ -47,6 +47,16 @@ You can then invoke endpointer by executing
 
     $ endpointer [--invalidate] <path_to_json_config_file>
 
+Or, include it in a config.ru
+
+```ruby
+
+#config.ru
+require 'endpointer'
+
+run Endpointer.app(['--invalidate', '<path_to_json_file>'])
+```
+
 Endpointer will attempt to return a cached resource, if one is found to match the request. Otherwise, a call to the real service will be performed and the response, if successful, persisted.
 
 A simple example request to endpointer using cURL:
@@ -79,7 +89,6 @@ As mentioned above I'm actively going to work on improving endpointer and the fo
 
 * Custom cache path
 * The ability to easily edit cached files. Maybe a second executable that allows you to edit the canned responses in a pretty JSON format
-* Support all HTTP verbs(currently only GET, POST are supported methods)
 * A `--debug` flag to the command line that will give a pry window on every request allowing you to play with the Request and Response objects.
 * The ability to run headless on a service to make this a deployable fake web service
 * Configurable port
