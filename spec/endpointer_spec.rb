@@ -5,28 +5,28 @@ describe Endpointer do
     expect(Endpointer::VERSION).not_to be nil
   end
 
+  let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
+  let(:argument_parser) { double(Endpointer::ArgumentParser) }
+  let(:resource1) { Endpointer::Resource.new }
+  let(:resource2) { Endpointer::Resource.new }
+  let(:resources) { [resource1, resource2] }
+  let(:options) { Endpointer::Options.new(false) }
+  let(:app_creator) { double(:app_creator) }
+  let(:app) { double(:app) }
+  let(:cacher) { double(:cacher) }
+
+  before do
+    allow(Endpointer::ArgumentParser).to receive(:new).with(command_line_arguments).and_return(argument_parser)
+    allow(argument_parser).to receive(:parse_resources).and_return(resources)
+    allow(argument_parser).to receive(:parse_options).and_return(options)
+    allow(argument_parser).to receive(:valid?).and_return(true)
+    allow(Endpointer::AppCreator).to receive(:new).and_return(app_creator)
+    allow(app_creator).to receive(:create).and_return(app)
+    allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
+    allow(app).to receive(:run!)
+  end
+
   describe '.run' do
-    let(:command_line_arguments) { ['--invalidate', '/foo/bar/resources.json'] }
-    let(:argument_parser) { double(Endpointer::ArgumentParser) }
-    let(:resource1) { Endpointer::Resource.new }
-    let(:resource2) { Endpointer::Resource.new }
-    let(:resources) { [resource1, resource2] }
-    let(:options) { Endpointer::Options.new(false) }
-    let(:app_creator) { double(:app_creator) }
-    let(:app) { double(:app) }
-    let(:cacher) { double(:cacher) }
-
-    before do
-      allow(Endpointer::ArgumentParser).to receive(:new).with(command_line_arguments).and_return(argument_parser)
-      allow(argument_parser).to receive(:parse_resources).and_return(resources)
-      allow(argument_parser).to receive(:parse_options).and_return(options)
-      allow(argument_parser).to receive(:valid?).and_return(true)
-      allow(Endpointer::AppCreator).to receive(:new).and_return(app_creator)
-      allow(app_creator).to receive(:create).and_return(app)
-      allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
-      allow(app).to receive(:run!)
-    end
-
     it 'creates a dynamic sinatra app based on the resources and options' do
       expect(app_creator).to receive(:create).with(resources, options)
       described_class.run command_line_arguments
@@ -62,5 +62,13 @@ describe Endpointer do
         }.to raise_error(Endpointer::Errors::InvalidArgumentsError)
       end
     end
+  end
+
+  describe '.app' do
+
+    it 'returns the sinatra application' do
+      expect(described_class.app(command_line_arguments)).to eq(app)
+    end
+
   end
 end
