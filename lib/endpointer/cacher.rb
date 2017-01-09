@@ -1,4 +1,5 @@
 require 'endpointer/errors/cached_item_not_found_error'
+require 'endpointer/errors/invalid_cache_dir_error'
 require 'endpointer/cache_container'
 require 'yaml'
 
@@ -40,8 +41,12 @@ module Endpointer
     end
 
     def initialize_path(path)
-      @path = path
-      Dir.mkdir(@path) unless File.exists?(@path)
+      begin
+        @path = path
+        Dir.mkdir(@path) unless File.exists?(@path)
+      rescue Errno::ENOENT => e
+        raise Endpointer::Errors::InvalidCacheDirError.new(e.message)
+      end
     end
   end
 end

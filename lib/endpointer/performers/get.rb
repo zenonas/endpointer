@@ -4,12 +4,19 @@ require 'rest-client'
 
 module Endpointer
   module Performers
-    class Get < Method
+    class Get
+      include Endpointer::Performers::Method
 
       def execute(request, resource)
+        execute_method(resource.method, request, resource)
+      end
+
+      private
+
+      def execute_method(method, request, resource)
         begin
           url = File.join(create_hostname(resource), create_path(request))
-          response = RestClient::Request.execute(method: :get, url: url, headers: create_headers(request, resource))
+          response = RestClient::Request.execute(method: method, url: url, headers: create_headers(request, resource))
         rescue RestClient::ExceptionWithResponse => e
           response = e.response
         end

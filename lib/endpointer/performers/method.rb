@@ -3,13 +3,7 @@ require 'uri'
 
 module Endpointer
   module Performers
-    class Method
-
-      def execute(request, resource)
-      end
-
-      private
-
+    module Method
       def create_headers(request, resource)
         resource.headers.keys.each_with_object({}) do |key, header|
           header[key] = request_header_or_default(key, request, resource)

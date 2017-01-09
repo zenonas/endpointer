@@ -6,7 +6,7 @@ describe Endpointer::Cacher do
   let(:timestamp) { Time.now.utc }
 
   let(:cache_container) { Endpointer::CacheContainer.new(resource, response, timestamp) }
-  
+
   let(:tempdir) { Dir.mktmpdir }
 
   subject { described_class.new(tempdir) }
@@ -52,6 +52,17 @@ describe Endpointer::Cacher do
         FileUtils.remove_entry(tempdir)
       end
 
+      context 'when it cant create it' do
+        let(:invalid_cache_path) { '/foo/bar' }
+
+        it "raises an error" do
+          expect {
+            described_class.new(invalid_cache_path)
+          }.to raise_error(Endpointer::Errors::InvalidCacheDirError)
+        end
+
+      end
+
       it 'creates it' do
         described_class.new(tempdir)
         expect(File.exists?(tempdir)).to be_truthy
@@ -81,6 +92,6 @@ describe Endpointer::Cacher do
   end
 
   after do
-    FileUtils.remove_entry(tempdir)
+    FileUtils.remove_entry(tempdir) if File.exists?(tempdir)
   end
 end

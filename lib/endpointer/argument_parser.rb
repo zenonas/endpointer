@@ -5,9 +5,10 @@ require 'json'
 module Endpointer
   class ArgumentParser
 
-    VALID_OPTIONS = {
-      '--invalidate' => true
-    }
+    VALID_OPTIONS = [
+      '--invalidate',
+      '--cache-dir='
+    ]
 
     def initialize(arguments)
       @arguments = arguments
@@ -26,7 +27,10 @@ module Endpointer
 
     def valid?
       return false unless config_file
-      return false unless (@arguments - VALID_OPTIONS.keys).size ==  1
+      valid_arguments = VALID_OPTIONS + [config_file]
+      return false if @arguments.any? { |arg|
+        valid_arguments.none? { |valid_opt| arg.include?(valid_opt) }
+      }
       true
     end
 
@@ -34,7 +38,10 @@ module Endpointer
 
     def build_options_from(parsed_options)
       invalidate = parsed_options.include?("--invalidate")
-      Options.new(invalidate)
+      cache_dir_arg = parsed_options.find { |opt| opt.match(/^--cache-dir/) }
+      cache_dir = cache_dir_arg.split('=').last unless cache_dir_arg.nil?
+
+      Options.new(invalidate, cache_dir)
     end
 
     def config_file

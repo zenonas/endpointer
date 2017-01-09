@@ -6,6 +6,6 @@ require "endpointer"
 begin
   Endpointer.run ARGV
 rescue Endpointer::Errors::InvalidArgumentsError
-  STDERR.puts "Usage: endpointer [--invalidate] <path_to_json_config>.json"
+  STDERR.puts "Usage: endpointer [--invalidate] [--cache-dir=/path/to/cache] <path_to_json_config>.json"
   exit 1
 end

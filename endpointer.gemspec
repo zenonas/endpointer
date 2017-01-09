@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Zen Kyprianou"]
   spec.email         = ["endpointer@zenonas.com"]
 
-  spec.summary       = %q{Faster dev environment with this simple caching proxy DSL}
-  spec.description   = %q{Allows you to define endpoints to serve via a simple caching proxy dsl}
+  spec.summary       = %q{For when you stacks too big for your box}
+  spec.description   = %q{Allows you to define endpoints to serve via a small caching proxy}
   spec.homepage      = "https://github.com/zenonas/endpointer"
   spec.license       = "MIT"
 

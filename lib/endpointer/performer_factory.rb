@@ -6,7 +6,10 @@ module Endpointer
 
     PERFORMERS = {
       get: Endpointer::Performers::Get,
-      post: Endpointer::Performers::Post
+      post: Endpointer::Performers::Post,
+      put: Endpointer::Performers::Post,
+      patch: Endpointer::Performers::Post,
+      delete: Endpointer::Performers::Get
     }
 
     def self.create(method)

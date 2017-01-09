@@ -13,7 +13,7 @@ describe Endpointer::ResourceExecutor do
   let(:performer) { double(:performer) }
 
   before do
-    allow(Endpointer::Cacher).to receive(:new).with(Endpointer::CACHE_DIR).and_return(cacher)
+    allow(Endpointer::Cacher).to receive(:new).with(options.cache_dir).and_return(cacher)
     allow(Endpointer::PerformerFactory).to receive(:create).with(:get).and_return(performer)
   end
 
