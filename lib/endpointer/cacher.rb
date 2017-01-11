@@ -43,7 +43,7 @@ module Endpointer
     def initialize_path(path)
       begin
         @path = path
-        Dir.mkdir(@path) unless File.exists?(@path)
+        Dir.mkdir(@path) unless File.exist?(@path)
       rescue Errno::ENOENT => e
         raise Endpointer::Errors::InvalidCacheDirError.new(e.message)
       end

@@ -13,13 +13,13 @@ module Endpointer
 
     def uglify_headers(headers)
       headers.inject({}) { |out, (key, value)|
-        out[key.to_s.upcase.gsub('_', '-')] = value
+        out[key.to_s.upcase.tr('_', '-')] = value
         out
       }
     end
 
     def sanitise_headers(headers)
-      headers.reject {|header, value|
+      headers.reject {|header, _|
         header.match(/TRANSFER-ENCODING/)
       }
     end

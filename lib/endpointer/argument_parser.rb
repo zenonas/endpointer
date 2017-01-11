@@ -57,7 +57,7 @@ module Endpointer
     end
 
     def config_file?(argument)
-      argument.match(/.json$/) || File.exists?(argument)
+      argument.match(/.json$/) || File.exist?(argument)
     end
 
   end

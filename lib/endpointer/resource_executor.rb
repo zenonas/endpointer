@@ -7,7 +7,7 @@ module Endpointer
     def perform(request, resource, options)
       begin
         cache(options.cache_dir).get(resource)
-      rescue Endpointer::Errors::CachedItemNotFoundError => e
+      rescue Endpointer::Errors::CachedItemNotFoundError
         response = Endpointer::PerformerFactory.create(resource.method).execute(request, resource)
         cache(options.cache_dir).set(resource, response)
         response
