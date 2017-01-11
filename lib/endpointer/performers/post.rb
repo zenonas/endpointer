@@ -18,9 +18,10 @@ module Endpointer
           url = File.join(create_hostname(resource), create_path(request))
           response = RestClient.send(method,
             url,
-            request.body.string,
+            request.body.read,
             create_headers(request, resource)
           )
+          request.body.rewind
         rescue RestClient::ExceptionWithResponse => e
           response = e.response
         end
