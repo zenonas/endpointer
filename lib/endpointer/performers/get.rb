@@ -15,8 +15,7 @@ module Endpointer
 
       def execute_method(method, request, resource)
         begin
-          url = File.join(create_hostname(resource), create_path(request))
-          response = RestClient::Request.execute(method: method, url: url, headers: create_headers(request, resource))
+          response = RestClient::Request.execute(method: method, url: construct_uri(request, resource), headers: create_headers(request, resource))
         rescue RestClient::ExceptionWithResponse => e
           response = e.response
         end

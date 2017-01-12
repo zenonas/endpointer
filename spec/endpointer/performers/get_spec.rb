@@ -8,7 +8,7 @@ describe Endpointer::Performers::Get do
       'Authorization' => 'Bearer expected'
     }
   end
-  let(:request) { double(:request, env: headers, path: URI.parse(url).path) }
+  let(:request) { double(:request, env: headers, url: url) }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
   let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
 

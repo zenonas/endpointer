@@ -15,9 +15,8 @@ module Endpointer
 
       def execute_method(method, request, resource)
         begin
-          url = File.join(create_hostname(resource), create_path(request))
           response = RestClient.send(method,
-            url,
+            construct_uri(request, resource),
             request.body.read,
             create_headers(request, resource)
           )

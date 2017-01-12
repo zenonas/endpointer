@@ -18,17 +18,16 @@ module Endpointer
         "HTTP_#{header_name.upcase.tr('-', '_')}"
       end
 
-      def create_hostname(resource)
-        host = URI.parse(resource.url).host
-        port = URI.parse(resource.url).port
-        "#{host}:#{port}"
-      end
+      def construct_uri(request, resource)
+        parsed_request_url = URI.parse(request.url)
+        parsed_resource_url = URI.parse(resource.url)
 
-      def create_path(request)
-        path = request.path
-        query_string = request.env['QUERY_STRING']
-        path << "?#{query_string}" unless query_string.nil?
-        path
+        parsed_request_url.scheme = parsed_resource_url.scheme
+        parsed_request_url.userinfo = parsed_resource_url.userinfo
+        parsed_request_url.host = parsed_resource_url.host
+        parsed_request_url.port = parsed_resource_url.port
+
+        parsed_request_url.to_s
       end
     end
   end

@@ -7,7 +7,7 @@ describe Endpointer::Performers::Post do
       'Authorization' => 'Bearer expected'
     }
   end
-  let(:request) { double(:request, env: headers, path: URI.parse(url).path, body: request_body) }
+  let(:request) { double(:request, env: headers, url: url, body: request_body) }
   let(:request_body) do
     s = StringIO.new
     s.write '{\"foo\":\"bar\"}'
