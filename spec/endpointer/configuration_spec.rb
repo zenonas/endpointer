@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Endpointer::Options do
+describe Endpointer::Configuration do
   describe '.new' do
     it 'initializes to the defaults' do
       options = described_class.new

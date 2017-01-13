@@ -1,5 +1,5 @@
 require 'endpointer/resource'
-require 'endpointer/options'
+require 'endpointer/configuration'
 require 'json'
 
 module Endpointer
@@ -41,7 +41,7 @@ module Endpointer
       cache_dir_arg = parsed_options.find { |opt| opt.match(/^--cache-dir/) }
       cache_dir = cache_dir_arg.split('=').last unless cache_dir_arg.nil?
 
-      Options.new(invalidate, cache_dir)
+      Configuration.new(invalidate, cache_dir)
     end
 
     def config_file

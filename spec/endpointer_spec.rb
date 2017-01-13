@@ -10,7 +10,7 @@ describe Endpointer do
   let(:resource1) { Endpointer::Resource.new }
   let(:resource2) { Endpointer::Resource.new }
   let(:resources) { [resource1, resource2] }
-  let(:options) { Endpointer::Options.new(false) }
+  let(:options) { Endpointer::Configuration.new(false) }
   let(:app_creator) { double(:app_creator) }
   let(:app) { double(:app) }
   let(:cacher) { double(:cacher) }
@@ -38,7 +38,7 @@ describe Endpointer do
     end
 
     context 'if the cache is to be invalidated' do
-      let(:options) { Endpointer::Options.new(true) }
+      let(:options) { Endpointer::Configuration.new(true) }
 
       before do
         allow(cacher).to receive(:invalidate)

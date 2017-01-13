@@ -1,5 +1,5 @@
 module Endpointer
-  class Options
+  class Configuration
 
     attr_accessor :invalidate, :cache_dir
 

@@ -10,7 +10,7 @@ describe Endpointer::AppCreator do
   let(:resource1) { Endpointer::Resource.new("resource1", :get, url1, {'Authorization' => 'Bearer bar'}) }
   let(:resource2) { Endpointer::Resource.new("resource2", :post, url2, {}) }
   let(:resources) { [resource1, resource2] }
-  let(:options) { Endpointer::Options.new(invalidate) }
+  let(:options) { Endpointer::Configuration.new(invalidate) }
 
   before do
     stub_const('Endpointer::ResourceExecutor', Endpointer::ResourceExecutorStub)
