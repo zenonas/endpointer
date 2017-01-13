@@ -1,10 +1,10 @@
 require "endpointer/version"
 require "endpointer/argument_parser"
+require "endpointer/resource_parser"
 require "endpointer/app_creator"
 require "endpointer/errors/invalid_arguments_error"
 
 module Endpointer
-
   def self.run(arguments)
     app(arguments).run!
   end
