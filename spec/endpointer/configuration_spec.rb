@@ -37,4 +37,8 @@ describe Endpointer::Configuration do
       end
     end
   end
+
+  after do
+    FileUtils.remove_entry(config_file_path) if File.exist?(config_file_path)
+  end
 end
