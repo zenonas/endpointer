@@ -3,7 +3,7 @@ require 'tempfile'
 require 'endpointer/argument_parser'
 
 describe Endpointer::ArgumentParser do
-  let(:tempfile) { Tempfile.new }
+  let(:tempfile) { Tempfile.new('endpointer_config') }
 
   let(:cache_path) { '/some/path' }
   let(:some_config_file) { 'some config' }

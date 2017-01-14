@@ -6,7 +6,7 @@ Endpointer is a small gem that tries to act as a caching proxy between your dev 
 
 ## Requirements
 
-* Ruby 2.2+ (Tests running against MRI 2.4.0, 2.3.3, and JRuby 9.1.6.0)
+* Ruby 2.2+ (Tests running against MRI 2.4.0, 2.3.3, 2.2.6, and JRuby 9.1.6.0)
 
 ## Installation
 

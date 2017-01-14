@@ -6,6 +6,7 @@ branches:
 rvm:
 - 2.4.0
 - 2.3.3
+- 2.2.6
 - jruby-9.1.6.0
 script:
 - bundle exec rake
