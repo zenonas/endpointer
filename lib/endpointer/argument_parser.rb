@@ -5,60 +5,43 @@ require 'json'
 module Endpointer
   class ArgumentParser
 
-    VALID_OPTIONS = [
-      '--invalidate',
-      '--cache-dir='
-    ]
-
-    def initialize(arguments)
-      @arguments = arguments
-    end
-
-    def parse_resources
-      parse_config(config_file).map do |resource|
-        Resource.new(resource["id"], resource["method"].to_sym, resource["url"], resource["headers"])
+    def parse(arguments)
+      begin
+        opt_parser.parse(arguments)
+      rescue OptionParser::InvalidOption => e
+        abort "Error: #{e}"
       end
-    end
 
-    def parse_options
-      options = @arguments.select { |argument| option_argument?(argument)}
-      build_options_from(options)
-    end
-
-    def valid?
-      return false unless config_file
-      valid_arguments = VALID_OPTIONS + [config_file]
-      return false if @arguments.any? { |arg|
-        valid_arguments.none? { |valid_opt| arg.include?(valid_opt) }
-      }
-      true
+      configuration
     end
 
     private
 
-    def build_options_from(parsed_options)
-      invalidate = parsed_options.include?("--invalidate")
-      cache_dir_arg = parsed_options.find { |opt| opt.match(/^--cache-dir/) }
-      cache_dir = cache_dir_arg.split('=').last unless cache_dir_arg.nil?
+    def opt_parser
+      OptionParser.new do |parser|
+        parser.banner = "Usage: endpointer [options]"
 
-      Configuration.new(invalidate, cache_dir)
+        parser.on("-d CACHE_DIR", "--cache-dir CACHE_DIR", "Modifies the default cache directory [Default: TMP_DIR/endpointer_cache]") do |cache_dir|
+          configuration.cache_dir = cache_dir if cache_dir
+        end
+
+        parser.on("-i", "--invalidate", "Invalidates the cache at startup") do
+          configuration.invalidate = true
+        end
+
+        parser.on("-c CONFIG", "--config CONFIG", "Override the default resource config file path. [Default: ./endpointer.json]") do |config|
+          begin
+            resource_config = File.read(config)
+            configuration.resource_config = resource_config
+          rescue Errno::ENOENT
+            abort "Error: Config file supplied does not exist"
+          end
+        end
+      end
     end
 
-    def config_file
-      @arguments.find { |argument| config_file?(argument) }
+    def configuration
+      @configuration ||= Endpointer::Configuration.new
     end
-
-    def parse_config(config_file)
-      JSON.parse(File.read(config_file))
-    end
-
-    def option_argument?(argument)
-      argument.match(/^--.*/)
-    end
-
-    def config_file?(argument)
-      argument.match(/.json$/) || File.exist?(argument)
-    end
-
   end
 end

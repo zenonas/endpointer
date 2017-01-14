@@ -1,96 +1,77 @@
 require 'spec_helper'
 require 'tempfile'
+require 'endpointer/argument_parser'
 
 describe Endpointer::ArgumentParser do
   let(:tempfile) { Tempfile.new }
-  let(:command_line_arguments) { ['--invalidate', tempfile.path] }
 
-  subject { Endpointer::ArgumentParser.new(command_line_arguments) }
-
-  let(:id1) { 'foo' }
-  let(:id2) { 'bar' }
-  let(:url1) { "http://example.com/foo" }
-  let(:url2) { "http://example.com/bar" }
-  let(:header1) { { "Authorization" => "Bearer foo" } }
-  let(:header2) { { "Authorization" => "Bearer bar" } }
   let(:cache_path) { '/some/path' }
+  let(:some_config_file) { 'some config' }
 
-  describe'#parse_resources'do
-    let(:config) do
-      [
-        {
-          id: id1,
-          method: :get,
-          url: url1,
-          headers: header1
-        },
-        {
-          id: id2,
-          method: :post,
-          url: url2,
-          headers: header2
-        }
-      ]
-    end
-
+  describe'#parse'do
     before do
-      File.write(tempfile.path, JSON.generate(config))
+      File.write(tempfile.path, some_config_file)
     end
 
-    it 'provides a list of resources' do
-      expect(subject.parse_resources.count).to eq(2)
-      expect(subject.parse_resources.first.id).to eq(id1)
-      expect(subject.parse_resources.first.method).to eq(:get)
-      expect(subject.parse_resources.first.url).to eq(url1)
-      expect(subject.parse_resources.first.headers).to eq(header1)
-      expect(subject.parse_resources.last.id).to eq(id2)
-      expect(subject.parse_resources.last.method).to eq(:post)
-      expect(subject.parse_resources.last.url).to eq(url2)
-      expect(subject.parse_resources.last.headers).to eq(header2)
-    end
-  end
-
-  describe "#parse_options" do
     context 'cache-dir option' do
-      let(:command_line_arguments) { ["--cache-dir=#{cache_path}", tempfile.path] }
+      let(:command_line_arguments) { ["--cache-dir=#{cache_path}"] }
 
       it 'sets the cache dir to the specified dir' do
-        expect(subject.parse_options.cache_dir).to eq(cache_path)
+        expect(subject.parse(command_line_arguments).cache_dir).to eq(cache_path)
+      end
+
+      context 'when the cache path in not set' do
+        let(:command_line_arguments) { [] }
+
+        it 'leaves the default' do
+          expect(subject.parse(command_line_arguments).cache_dir).to eq(Endpointer::Configuration.new.cache_dir)
+        end
       end
     end
 
     context 'invalidate' do
-      it 'returns the correctly configured options' do
-        expect(subject.parse_options.invalidate).to be_truthy
-      end
-    end
-  end
+      let(:command_line_arguments) { ["--invalidate"] }
 
-  describe "#validate_arguments" do
-    context "when the arguments are valid" do
-      let(:command_line_arguments) { ["--cache-dir=#{cache_path}", tempfile.path] }
-
-      it "returns true" do
-        expect(subject.valid?).to be_truthy
+      it 'sets the invalidate option' do
+        expect(subject.parse(command_line_arguments).invalidate).to be_truthy
       end
     end
 
-    context "when all arguments are invalid" do
-      let(:command_line_arguments) { ['--something'] }
+    context 'input config file' do
+      let(:command_line_arguments) { ["--config=#{tempfile.path}"] }
 
-      it "returns false" do
-        expect(subject.valid?).to be_falsey
+      it 'reads the config and sets it on the configuration' do
+        expect(subject.parse(command_line_arguments).resource_config).to eq(some_config_file)
+      end
+
+      context 'when the config supplied doesnt exist' do
+        let(:command_line_arguments) { ["--config=/foo/bar"] }
+
+        it 'outputs a message to stderr' do
+          begin
+            expect {
+              subject.parse(command_line_arguments)
+            }.to output("Error: Config file supplied does not exist").to_stderr
+          rescue SystemExit
+          end
+
+        end
       end
     end
 
-    context "when some arguemnts are invalid" do
-      let(:command_line_arguments) { ['--invalid', tempfile.path] }
+    context 'invalid argument' do
+      let(:command_line_arguments) { ["--something"] }
+      it 'outputs a message to stderr' do
+        begin
+          expect {
+            subject.parse(command_line_arguments)
+          }.to output("Error: invalid option --something").to_stderr
+        rescue SystemExit
+        end
 
-      it "returns false" do
-        expect(subject.valid?).to be_falsey
       end
-
     end
+
   end
 
   after do
