@@ -1,0 +1,19 @@
+[
+  {
+    "id": "httpbinpost",
+    "method": "post",
+    "url": "http://httpbin.org/post",
+    "headers": {
+      "Authorization": "Bearer test",
+      "Content-Type": "application/json"
+    }
+  },
+  {
+    "id": "httpbinget",
+    "method": "get",
+    "url": "https://httpbin.org/get",
+    "headers": {
+      "Authorization": "Bearer test"
+    }
+  }
+]

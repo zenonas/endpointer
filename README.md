@@ -45,7 +45,19 @@ In order to use Endpointer you need to create a JSON configuration file with the
 
 You can then invoke endpointer by executing
 
-    $ endpointer [--invalidate] <path_to_json_config_file>
+    $ endpointer
+
+(Note: Endpointer by default looks for a file called `endpointer.json` in the current directory)
+
+A full list of endpointer commands can be seen by invoking `endpointer --help`
+```
+❯ endpointer --help
+Usage: endpointer [options]
+    -d, --cache-dir CACHE_DIR        Modifies the default cache directory [Default: TMP_DIR/endpointer_cache]
+    -i, --invalidate                 Invalidates the cache at startup
+    -c, --config CONFIG              Override the default resource config file path. [Default: ./endpointer.json]
+
+```
 
 Or, include it in a config.ru
 
@@ -54,7 +66,13 @@ Or, include it in a config.ru
 #config.ru
 require 'endpointer'
 
-run Endpointer.app(['--invalidate', '<path_to_json_file>'])
+Endpointer.configure do |config|
+  config.invalidate = false # Default
+  config.resource_config = File.read('./endpointer.json') # Default
+  config.cache_dir = File.join(Dir.tmpdir, 'endpointer_cache') # Default
+end
+
+run Endpointer.app
 ```
 
 Endpointer will attempt to return a cached resource, if one is found to match the request. Otherwise, a call to the real service will be performed and the response, if successful, persisted.
@@ -71,7 +89,7 @@ If the request is to be executed against the real service the headers defined in
 
 By default endpointer will use your operating system's temp directory to store its cache files `(TMP_DIR/endpointer_cache)`. In order to configure the cache path you need to pass the `--cache-dir=<path>` argument.
 
-    $ endpointer [--invalidate] [--cache-dir=/path/to/cache] <path_to_json_config_file>
+    $ endpointer -cache-dir=/path/to/cache
 
 You can provide the `--invalidate` flag to the command line to invalidate the cache. This empties the endpointer_cache directory.
 

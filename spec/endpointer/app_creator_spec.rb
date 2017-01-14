@@ -10,10 +10,13 @@ describe Endpointer::AppCreator do
   let(:resource1) { Endpointer::Resource.new("resource1", :get, url1, {'Authorization' => 'Bearer bar'}) }
   let(:resource2) { Endpointer::Resource.new("resource2", :post, url2, {}) }
   let(:resources) { [resource1, resource2] }
-  let(:options) { Endpointer::Options.new(invalidate) }
+  let(:config) { Endpointer::Configuration.new(invalidate) }
+  let(:resource_parser) { double(Endpointer::ResourceParser) }
 
   before do
     stub_const('Endpointer::ResourceExecutor', Endpointer::ResourceExecutorStub)
+    allow(Endpointer::ResourceParser).to receive(:new).and_return(resource_parser)
+    allow(resource_parser).to receive(:parse).with(config.resource_config).and_return(resources)
   end
 
   describe '#create' do
@@ -30,7 +33,7 @@ describe Endpointer::AppCreator do
   end
 
   def app
-    subject.create(resources, options)
+    subject.create(config)
   end
 end
 

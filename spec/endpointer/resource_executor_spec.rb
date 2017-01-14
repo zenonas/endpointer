@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Endpointer::ResourceExecutor do
   let(:url) { "http://example.com/foo" }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
-  let(:options) { Endpointer::Options.new(true) }
+  let(:options) { Endpointer::Configuration.new(true) }
   let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
 
   let(:request) { double(:request) }

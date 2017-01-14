@@ -1,19 +1,30 @@
 require "endpointer/version"
-require "endpointer/argument_parser"
+require "endpointer/resource_parser"
 require "endpointer/app_creator"
 require "endpointer/errors/invalid_arguments_error"
+require 'endpointer/configuration'
 
 module Endpointer
+  class << self
+    def run(config)
+      @configuration = config
+      app.run!
+    end
 
-  def self.run(arguments)
-    app(arguments).run!
-  end
+    def app
+      Cacher.new(configuration.cache_dir).invalidate if configuration.invalidate
+      AppCreator.new.create(configuration)
+    end
 
-  def self.app(arguments)
-    argument_parser = ArgumentParser.new(arguments)
-    raise Errors::InvalidArgumentsError unless argument_parser.valid?
-    options = argument_parser.parse_options
-    Cacher.new(options.cache_dir).invalidate if options.invalidate
-    AppCreator.new.create(argument_parser.parse_resources, options)
+    def configure
+      yield(configuration) if block_given?
+      self
+    end
+
+    private
+
+    def configuration
+      @configuration ||= Configuration.new
+    end
   end
 end
