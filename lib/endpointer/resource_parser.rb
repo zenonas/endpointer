@@ -12,6 +12,7 @@ module Endpointer
     private
 
     def parse_config(config)
+      abort("Error: No config file present") if config.nil?
       begin
         JSON.parse(config)
       rescue JSON::ParserError

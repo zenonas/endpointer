@@ -56,5 +56,18 @@ describe Endpointer::ResourceParser do
         end
       end
     end
+
+    context 'when the resource config is nil' do
+      let(:resource_config) { nil }
+
+      it 'aborts the application' do
+        begin
+          expect {
+            subject.parse(resource_config)
+          }.to output("Error: No config file present").to_stderr
+        rescue SystemExit
+        end
+      end
+    end
   end
 end
