@@ -12,7 +12,11 @@ module Endpointer
     private
 
     def parse_config(config)
-      JSON.parse(config)
+      begin
+        JSON.parse(config)
+      rescue JSON::ParserError
+        abort("Error: The resource config is invalid")
+      end
     end
   end
 end

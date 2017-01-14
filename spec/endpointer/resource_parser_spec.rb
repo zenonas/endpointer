@@ -43,5 +43,18 @@ describe Endpointer::ResourceParser do
       expect(result.last.url).to eq(url2)
       expect(result.last.headers).to eq(header2)
     end
+
+    context 'when the resource config is invalid' do
+      let(:resource_config) { 'something' }
+
+      it 'aborts the application' do
+        begin
+          expect {
+            subject.parse(resource_config)
+          }.to output("Error: The resource config is invalid").to_stderr
+        rescue SystemExit
+        end
+      end
+    end
   end
 end
