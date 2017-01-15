@@ -1,7 +1,7 @@
 module Endpointer
   class Configuration
 
-    attr_accessor :invalidate, :cache_dir, :resource_config
+    attr_accessor :invalidate, :cache_dir, :resource_config, :edit_mode
 
     DEFAULT_CONFIG_PATH = './endpointer.json'
 

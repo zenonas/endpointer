@@ -37,6 +37,10 @@ module Endpointer
             abort "Error: Config file supplied does not exist"
           end
         end
+
+        parser.on("-e RESOURCE_ID", "--edit RESOURCE_ID", "Allows you to edit the cached response of a given RESOURCE_ID. EDITOR must be set") do |resource_id|
+          configuration.edit_mode = resource_id
+        end
       end
     end
 

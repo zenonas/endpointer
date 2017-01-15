@@ -8,7 +8,7 @@ module Endpointer
   class << self
     def run(config)
       @configuration = config
-      app.run!
+      app.run! if config.edit_mode.nil?
     end
 
     def app

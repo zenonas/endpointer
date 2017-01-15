@@ -5,4 +5,23 @@ require "endpointer"
 require "endpointer/argument_parser"
 
 config = Endpointer::ArgumentParser.new.parse(ARGV)
+
+if config.edit_mode
+  resources = Endpointer::ResourceParser.new.parse(config.resource_config)
+  resource_to_edit = resources.find { |res| res.id == config.edit_mode }
+
+  response = Endpointer::Cacher.new(config.cache_dir).get(resource_to_edit)
+
+  tmpfile = Tempfile.new(resource_to_edit.id)
+  tmpfile.write(JSON.pretty_generate(JSON.parse(response.body)))
+  tmpfile.flush
+
+  system("#{ENV['EDITOR']} #{tmpfile.path}")
+
+  new_response_body = File.read(tmpfile.path)
+
+  response.body = new_response_body
+
+  Endpointer::Cacher.new(config.cache_dir).set(resource_to_edit, response)
+end
 Endpointer.run config
