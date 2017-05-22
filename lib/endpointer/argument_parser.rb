@@ -1,5 +1,6 @@
 require 'endpointer/resource'
 require 'endpointer/configuration'
+require 'optionparser'
 require 'json'
 
 module Endpointer
