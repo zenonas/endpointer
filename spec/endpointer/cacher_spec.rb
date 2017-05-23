@@ -35,7 +35,7 @@ describe Endpointer::Cacher do
           new.url = "http://something.com"
           new
         end
-        
+
         before do
           allow(cache_key_resolver).to receive(:get_key).with(slightly_different_resource, request_body).and_return(key_name)
         end
@@ -84,7 +84,7 @@ describe Endpointer::Cacher do
 
     context 'when the cache dir exists' do
       it 'stores the response in the cache dir as a yaml dump' do
-        subject.set(resource, response)
+        subject.set(resource, request_body, response)
         cached_response = YAML.load(File.read(File.join(tempdir, key_name)))
         expect(cached_response.response).to eq(response)
       end

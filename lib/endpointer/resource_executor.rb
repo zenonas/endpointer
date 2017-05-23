@@ -9,7 +9,7 @@ module Endpointer
         cache(options.cache_dir).get(resource, get_request_body(request))
       rescue Endpointer::Errors::CachedItemNotFoundError
         response = Endpointer::PerformerFactory.create(resource.method).execute(request, resource)
-        cache(options.cache_dir).set(resource, response)
+        cache(options.cache_dir).set(resource, get_request_body(request), response)
         response
       end
     end

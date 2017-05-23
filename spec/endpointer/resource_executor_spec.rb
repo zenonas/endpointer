@@ -40,7 +40,7 @@ describe Endpointer::ResourceExecutor do
     context 'the cache doesnt have the resource' do
       before do
         allow(cacher).to receive(:get).with(resource, request_body).and_raise(Endpointer::Errors::CachedItemNotFoundError)
-        allow(cacher).to receive(:set).with(resource, response)
+        allow(cacher).to receive(:set).with(resource, request_body, response)
         allow(performer).to receive(:execute).with(request, resource).and_return(response)
       end
 
@@ -49,7 +49,7 @@ describe Endpointer::ResourceExecutor do
       end
 
       it 'stores the response in the cache' do
-        expect(cacher).to receive(:set).with(resource, response)
+        expect(cacher).to receive(:set).with(resource, request_body, response)
         subject.perform(request, resource, options)
       end
     end

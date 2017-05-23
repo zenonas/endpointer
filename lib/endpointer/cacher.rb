@@ -13,14 +13,14 @@ module Endpointer
 
     def get(resource, request_body)
       cache_key = get_cache_key(resource, request_body)
-      cache_container = retrieve_cache_container(resource)
+      cache_container = retrieve_cache_container(cache_key)
       raise Endpointer::Errors::CachedItemNotFoundError unless cache_container.resource == resource
       cache_container.response
     end
 
-    def set(resource, response)
+    def set(resource, request_body, response)
       cache_container = create_cache_container(resource, response)
-      File.write(File.join(@path, "#{resource.id}.yml"), YAML.dump(cache_container))
+      File.write(File.join(@path, get_cache_key(resource, request_body)), YAML.dump(cache_container))
     end
 
     def invalidate
@@ -34,9 +34,9 @@ module Endpointer
       Endpointer::CacheContainer.new(resource, response, Time.now.utc)
     end
 
-    def retrieve_cache_container(resource)
+    def retrieve_cache_container(cache_key)
       begin
-        YAML.load(File.read(File.join(@path, "#{resource.id}.yml")))
+        YAML.load(File.read(File.join(@path, cache_key)))
       rescue
         raise Endpointer::Errors::CachedItemNotFoundError
       end
