@@ -37,8 +37,8 @@ module Endpointer
     def retrieve_cache_container(cache_key)
       begin
         YAML.load(File.read(File.join(@path, cache_key)))
-      rescue
-        raise Endpointer::Errors::CachedItemNotFoundError
+      rescue Errno::ENOENT => e
+        raise Endpointer::Errors::CachedItemNotFoundError, e.message
       end
     end
 
@@ -51,7 +51,7 @@ module Endpointer
         @path = path
         Dir.mkdir(@path) unless File.exist?(@path)
       rescue Errno::ENOENT => e
-        raise Endpointer::Errors::InvalidCacheDirError.new(e.message)
+        raise Endpointer::Errors::InvalidCacheDirError, e.message
       end
     end
   end
