@@ -6,6 +6,10 @@
     "headers": {
       "Authorization": "Bearer test",
       "Content-Type": "application/json"
+    },
+    "matchers": {
+      "matcher1": "something at the end$",
+      "matcher2": "^starting with"
     }
   },
   {
@@ -14,10 +18,6 @@
     "url": "https://httpbin.org/get",
     "headers": {
       "Authorization": "Bearer test"
-    },
-    "matcher": {
-      "soeapmethod1": "/..../",
-      "soeapmethod2": "/..../"
     }
   }
 ]
