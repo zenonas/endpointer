@@ -14,6 +14,10 @@
     "url": "https://httpbin.org/get",
     "headers": {
       "Authorization": "Bearer test"
+    },
+    "matcher": {
+      "soeapmethod1": "/..../",
+      "soeapmethod2": "/..../"
     }
   }
 ]

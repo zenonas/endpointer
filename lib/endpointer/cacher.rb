@@ -1,6 +1,7 @@
 require 'endpointer/errors/cached_item_not_found_error'
 require 'endpointer/errors/invalid_cache_dir_error'
 require 'endpointer/cache_container'
+require 'endpointer/cache_key_resolver'
 require 'yaml'
 
 module Endpointer
@@ -10,7 +11,8 @@ module Endpointer
       initialize_path(path)
     end
 
-    def get(resource)
+    def get(resource, request_body)
+      cache_key = get_cache_key(resource, request_body)
       cache_container = retrieve_cache_container(resource)
       raise Endpointer::Errors::CachedItemNotFoundError unless cache_container.resource == resource
       cache_container.response
@@ -38,6 +40,10 @@ module Endpointer
       rescue
         raise Endpointer::Errors::CachedItemNotFoundError
       end
+    end
+
+    def get_cache_key(resource, request_body)
+      Endpointer::CacheKeyResolver.new.get_key(resource, request_body)
     end
 
     def initialize_path(path)

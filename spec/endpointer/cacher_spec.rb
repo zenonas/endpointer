@@ -6,10 +6,19 @@ describe Endpointer::Cacher do
   let(:timestamp) { Time.now.utc }
 
   let(:cache_container) { Endpointer::CacheContainer.new(resource, response, timestamp) }
+  let(:cache_key_resolver) { double(Endpointer::CacheKeyResolver) }
+  let(:key_name) { "#{resource.id}.yml" }
+
+  let(:request_body) { "some-body" }
 
   let(:tempdir) { Dir.mktmpdir }
 
   subject { described_class.new(tempdir) }
+
+  before do
+    allow(Endpointer::CacheKeyResolver).to receive(:new).and_return(cache_key_resolver)
+    allow(cache_key_resolver).to receive(:get_key).with(resource, request_body).and_return(key_name)
+  end
 
   describe '#get' do
     context 'when a resource file is found' do
@@ -17,7 +26,7 @@ describe Endpointer::Cacher do
         File.write(File.join(tempdir, "#{resource.id}.yml"), YAML.dump(cache_container))
       end
       it 'returns the response' do
-        expect(subject.get(resource)).to eq(response)
+        expect(subject.get(resource, request_body)).to eq(response)
       end
 
       context 'but the resource cached doesnt match' do
@@ -26,10 +35,14 @@ describe Endpointer::Cacher do
           new.url = "http://something.com"
           new
         end
+        
+        before do
+          allow(cache_key_resolver).to receive(:get_key).with(slightly_different_resource, request_body).and_return(key_name)
+        end
 
         it 'raises a CachedItemNotFoundError' do
           expect {
-            subject.get(slightly_different_resource)
+            subject.get(slightly_different_resource, request_body)
           }.to raise_error(Endpointer::Errors::CachedItemNotFoundError)
         end
       end
@@ -40,7 +53,7 @@ describe Endpointer::Cacher do
 
       it 'raises a CachedItemNotFoundError' do
           expect {
-            subject.get(resource)
+            subject.get(resource, request_body)
           }.to raise_error(Endpointer::Errors::CachedItemNotFoundError)
       end
     end
@@ -72,7 +85,7 @@ describe Endpointer::Cacher do
     context 'when the cache dir exists' do
       it 'stores the response in the cache dir as a yaml dump' do
         subject.set(resource, response)
-        cached_response = YAML.load(File.read(File.join(tempdir, "#{resource.id}.yml")))
+        cached_response = YAML.load(File.read(File.join(tempdir, key_name)))
         expect(cached_response.response).to eq(response)
       end
     end
