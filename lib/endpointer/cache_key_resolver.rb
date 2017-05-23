@@ -3,7 +3,7 @@ module Endpointer
     def get_key(resource, request_body)
       return "#{resource.id}.yml" if resource.matchers.nil?
 
-      matches = resource.matchers.select do |matcher_name, regex|
+      matches = resource.matchers.select do |_matcher_name, regex|
         request_body.match(regex)
       end
 
