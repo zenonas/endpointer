@@ -11,6 +11,8 @@ describe Endpointer::ResourceParser do
   let(:header2) { { "Authorization" => "Bearer bar" } }
   let(:cache_path) { '/some/path' }
 
+  let(:matchers) { { "matcher_id" => "someregex" } }
+
   describe'#parse'do
     let(:resource_config) do
       JSON.generate(
@@ -25,7 +27,8 @@ describe Endpointer::ResourceParser do
           id: id2,
           method: :post,
           url: url2,
-          headers: header2
+          headers: header2,
+          matchers: matchers
         }
       ]
       )
@@ -42,6 +45,7 @@ describe Endpointer::ResourceParser do
       expect(result.last.method).to eq(:post)
       expect(result.last.url).to eq(url2)
       expect(result.last.headers).to eq(header2)
+      expect(result.last.matchers).to eq(matchers)
     end
 
     context 'when the resource config is invalid' do

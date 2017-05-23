@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'stringio'
 
 describe Endpointer::ResourceExecutor do
   let(:url) { "http://example.com/foo" }
@@ -6,7 +7,15 @@ describe Endpointer::ResourceExecutor do
   let(:options) { Endpointer::Configuration.new(true) }
   let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
 
-  let(:request) { double(:request) }
+  let(:request_body) { "some body text" }
+  let(:body_string_io) do
+    io = StringIO.new
+    io << request_body
+    io.rewind
+    io
+  end
+
+  let(:request) { double(:request, body: body_string_io) }
 
   let(:cacher) { double(:cacher) }
   let(:response) { double(:response) }
@@ -20,7 +29,7 @@ describe Endpointer::ResourceExecutor do
   describe '#perform' do
     context 'the cache has the resource' do
       before do
-        allow(cacher).to receive(:get).with(resource).and_return(response)
+        allow(cacher).to receive(:get).with(resource, request_body).and_return(response)
       end
 
       it 'returns the response from the cache' do
@@ -30,8 +39,8 @@ describe Endpointer::ResourceExecutor do
 
     context 'the cache doesnt have the resource' do
       before do
-        allow(cacher).to receive(:get).with(resource).and_raise(Endpointer::Errors::CachedItemNotFoundError)
-        allow(cacher).to receive(:set).with(resource, response)
+        allow(cacher).to receive(:get).with(resource, request_body).and_raise(Endpointer::Errors::CachedItemNotFoundError)
+        allow(cacher).to receive(:set).with(resource, request_body, response)
         allow(performer).to receive(:execute).with(request, resource).and_return(response)
       end
 
@@ -40,7 +49,7 @@ describe Endpointer::ResourceExecutor do
       end
 
       it 'stores the response in the cache' do
-        expect(cacher).to receive(:set).with(resource, response)
+        expect(cacher).to receive(:set).with(resource, request_body, response)
         subject.perform(request, resource, options)
       end
     end

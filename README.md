@@ -37,6 +37,9 @@ In order to use Endpointer you need to create a JSON configuration file with the
     "headers": {
       "Authorization": "Bearer test",
       "Accept": "application/json"
+    },
+    "matchers": {
+      "matcher-id": "some regex"
     }
   },
   ...
@@ -85,6 +88,11 @@ If the request is to be executed against the real service the headers defined in
 
     $ curl -H "Accept: text/plain" http://localhost:4567/get
 
+
+### Custom matchers
+
+Endpointer now supports custom matchers with the goal to give you more fine grained control of what gets cached. This allows you to cache different requests using a regex separately. You just define your resource with its custom matchers as shown above. Endpointer will then attempt to match the regex against the request body and store the response separately if it matches. If no matcher matches it will default to the default cache key for the resource(resource id).
+
 ### Caching
 
 By default endpointer will use your operating system's temp directory to store its cache files `(TMP_DIR/endpointer_cache)`. In order to configure the cache path you need to pass the `--cache-dir=<path>` argument.
@@ -115,4 +123,3 @@ As mentioned above I'm actively going to work on improving endpointer and the fo
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

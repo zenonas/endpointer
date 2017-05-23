@@ -6,6 +6,10 @@
     "headers": {
       "Authorization": "Bearer test",
       "Content-Type": "application/json"
+    },
+    "matchers": {
+      "matcher1": "something at the end$",
+      "matcher2": "^starting with"
     }
   },
   {

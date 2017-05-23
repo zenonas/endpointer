@@ -1,6 +1,7 @@
 require 'endpointer/errors/cached_item_not_found_error'
 require 'endpointer/errors/invalid_cache_dir_error'
 require 'endpointer/cache_container'
+require 'endpointer/cache_key_resolver'
 require 'yaml'
 
 module Endpointer
@@ -10,15 +11,16 @@ module Endpointer
       initialize_path(path)
     end
 
-    def get(resource)
-      cache_container = retrieve_cache_container(resource)
+    def get(resource, request_body)
+      cache_key = get_cache_key(resource, request_body)
+      cache_container = retrieve_cache_container(cache_key)
       raise Endpointer::Errors::CachedItemNotFoundError unless cache_container.resource == resource
       cache_container.response
     end
 
-    def set(resource, response)
+    def set(resource, request_body, response)
       cache_container = create_cache_container(resource, response)
-      File.write(File.join(@path, "#{resource.id}.yml"), YAML.dump(cache_container))
+      File.write(File.join(@path, get_cache_key(resource, request_body)), YAML.dump(cache_container))
     end
 
     def invalidate
@@ -32,12 +34,16 @@ module Endpointer
       Endpointer::CacheContainer.new(resource, response, Time.now.utc)
     end
 
-    def retrieve_cache_container(resource)
+    def retrieve_cache_container(cache_key)
       begin
-        YAML.load(File.read(File.join(@path, "#{resource.id}.yml")))
-      rescue
-        raise Endpointer::Errors::CachedItemNotFoundError
+        YAML.load(File.read(File.join(@path, cache_key)))
+      rescue Errno::ENOENT => e
+        raise Endpointer::Errors::CachedItemNotFoundError, e.message
       end
+    end
+
+    def get_cache_key(resource, request_body)
+      Endpointer::CacheKeyResolver.new.get_key(resource, request_body)
     end
 
     def initialize_path(path)
@@ -45,7 +51,7 @@ module Endpointer
         @path = path
         Dir.mkdir(@path) unless File.exist?(@path)
       rescue Errno::ENOENT => e
-        raise Endpointer::Errors::InvalidCacheDirError.new(e.message)
+        raise Endpointer::Errors::InvalidCacheDirError, e.message
       end
     end
   end
