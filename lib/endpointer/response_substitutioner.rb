@@ -5,20 +5,22 @@ module Endpointer
       return response_body if substitutions.nil?
 
       substitutions.inject(response_body) do |output, substitution|
-        value_to_use = get_value_to_use(request_body, substitution)
-        value_to_replace = get_value_to_replace(response_body, substitution)
+        value_to_use = get_value_for(request_body, substitution.fetch('from_request'))
+        value_to_replace = get_value_for(response_body, substitution.fetch('to_response'))
         output.gsub(value_to_replace, value_to_use)
       end
     end
 
     private
 
-    def get_value_to_use(request_body, substitution)
-      request_body.match(Regexp.new(substitution.fetch('from_request')))[:match]
-    end
+    def get_value_for(string, regex)
+      match_data = string.match(Regexp.new(regex))
 
-    def get_value_to_replace(response_body, substitution)
-      response_body.match(Regexp.new(substitution.fetch('to_response')))[:match]
+      if match_data
+        match_data[:match]
+      else
+        ''
+      end
     end
   end
 end

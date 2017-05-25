@@ -37,5 +37,20 @@ describe Endpointer::ResponseSubstitutioner do
         expect(subject.substitute(request_body, response_body, [])).to eq(response_body)
       end
     end
+
+    context 'when your regexs dont match anything' do
+      let(:substitutions) do
+        [
+          {
+            'from_request' => 'a-regex-that-wont-match',
+            'to_response' => 'a-regex-that-wont-match'
+          }
+        ]
+      end
+
+      it 'returns the unmodified response' do
+        expect(subject.substitute(request_body, response_body, substitutions)).to eq(response_body)
+      end
+    end
   end
 end
