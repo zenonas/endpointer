@@ -28,5 +28,14 @@ describe Endpointer::ResponseSubstitutioner do
       end
     end
 
+    context 'when there are no substitutions' do
+      it 'returns the body unmodified if the substitutions are nil' do
+        expect(subject.substitute(request_body, response_body, nil)).to eq(response_body)
+      end
+
+      it 'returns the body unmodified if the substitutions are empty' do
+        expect(subject.substitute(request_body, response_body, [])).to eq(response_body)
+      end
+    end
   end
 end
