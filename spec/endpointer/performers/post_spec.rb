@@ -7,12 +7,16 @@ describe Endpointer::Performers::Post do
       'Authorization' => 'Bearer expected'
     }
   end
-  let(:request) { double(:request, env: headers, url: url, body: request_body) }
-  let(:request_body) do
-    s = StringIO.new
-    s.write '{\"foo\":\"bar\"}'
-    s
+  let(:request) { double(:request, env: headers, url: url, body: body_string_io) }
+
+  let(:request_body) { '{\"foo\":\"bar\"}' }
+  let(:body_string_io) do
+    io = StringIO.new
+    io << request_body
+    io.rewind
+    io
   end
+
   let(:headers) { { 'Authorization' => 'Bearer test' } }
   let(:resource) { Endpointer::Resource.new("resource", :post, url, headers) }
   let(:expected_response_body) { 'some response' }
@@ -31,9 +35,9 @@ describe Endpointer::Performers::Post do
         let(:resource) { Endpointer::Resource.new("resource", verb.to_sym, url, headers) }
 
         before do
-          stub_request(resource.method, resource.url).with(body: request.body.read, headers: headers)
+          stub_request(resource.method, resource.url).with(body: request_body, headers: headers)
             .to_return(status: 201, body: expected_response_body, headers: expected_response_headers)
-          allow(response_presenter).to receive(:present).with(status: 201, body: expected_response_body, headers: {content_type: 'application/json'}).and_return(expected_response)
+          allow(response_presenter).to receive(:present).with(status: 201, body: expected_response_body, headers: {content_type: 'application/json'}, request_body: request_body, resource: resource).and_return(expected_response)
         end
 
         it 'executes a get request to the resource with the configured headers' do
@@ -46,9 +50,9 @@ describe Endpointer::Performers::Post do
       let(:expected_response) { Endpointer::Response.new(500, expected_response_body, expected_response_headers) }
 
       before do
-        stub_request(resource.method, resource.url).with(body: request.body.read, headers: headers)
+        stub_request(resource.method, resource.url).with(body: request_body, headers: headers)
           .to_return(status: 500, body: expected_response_body, headers: expected_response_headers)
-        allow(response_presenter).to receive(:present).with(status: 500, body: expected_response_body, headers: {content_type: 'application/json'}).and_return(expected_response)
+        allow(response_presenter).to receive(:present).with(status: 500, body: expected_response_body, headers: {content_type: 'application/json'}, request_body: request_body, resource: resource).and_return(expected_response)
       end
 
       it 'executes a get request to the resource with the configured headers' do

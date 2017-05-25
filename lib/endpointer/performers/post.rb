@@ -14,10 +14,12 @@ module Endpointer
       private
 
       def execute_method(method, request, resource)
+        request_body = request.body.read
+
         begin
           response = RestClient.send(method,
             construct_uri(request, resource),
-            request.body.read,
+            request_body,
             create_headers(request, resource)
           )
           request.body.rewind
@@ -25,7 +27,7 @@ module Endpointer
           response = e.response
         end
 
-        Endpointer::ResponsePresenter.new.present(status: response.code, body: response.body, headers: response.headers)
+        Endpointer::ResponsePresenter.new.present(status: response.code, body: response.body, headers: response.headers, request_body: request_body, resource: resource)
       end
     end
   end

@@ -19,7 +19,10 @@ module Endpointer
         rescue RestClient::ExceptionWithResponse => e
           response = e.response
         end
-        Endpointer::ResponsePresenter.new.present(status: response.code, body: response.body, headers: response.headers)
+
+        request_body = request.body.read
+        request.body.rewind
+        Endpointer::ResponsePresenter.new.present(status: response.code, body: response.body, headers: response.headers, request_body: request_body, resource: resource)
       end
     end
   end
