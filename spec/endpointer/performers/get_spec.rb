@@ -8,9 +8,19 @@ describe Endpointer::Performers::Get do
       'Authorization' => 'Bearer expected'
     }
   end
-  let(:request) { double(:request, env: headers, url: url) }
+  
+  let(:request_body) { "some body text" }
+  let(:body_string_io) do
+    io = StringIO.new
+    io << request_body
+    io.rewind
+    io
+  end
+
+  let(:request) { double(:request, env: headers, url: url, body: body_string_io) }
   let(:headers) { { 'Authorization' => 'Bearer test' } }
   let(:resource) { Endpointer::Resource.new("resource", :get, url, headers) }
+
 
 
   let(:expected_response_body) { 'some response' }
@@ -32,7 +42,7 @@ describe Endpointer::Performers::Get do
         before do
           stub_request(resource.method, resource.url).with(headers: headers)
             .to_return(body: expected_response_body, headers: expected_response_headers)
-          allow(response_presenter).to receive(:present).with(status: 200, body: expected_response_body, headers: {content_type: 'application/json'}).and_return(expected_response)
+          allow(response_presenter).to receive(:present).with(status: 200, body: expected_response_body, headers: {content_type: 'application/json'}, request_body: request_body, resource: resource).and_return(expected_response)
         end
 
         it 'executes a get request to the resource with the configured headers' do
@@ -47,7 +57,7 @@ describe Endpointer::Performers::Get do
       before do
         stub_request(resource.method, resource.url).with(headers: headers)
           .to_return(status: 500, body: expected_response_body, headers: expected_response_headers)
-        allow(response_presenter).to receive(:present).with(status: 500, body: expected_response_body, headers: {content_type: 'application/json'}).and_return(expected_response)
+        allow(response_presenter).to receive(:present).with(status: 500, body: expected_response_body, headers: {content_type: 'application/json'}, request_body: request_body, resource: resource).and_return(expected_response)
       end
 
       it 'executes a get request to the resource with the configured headers' do

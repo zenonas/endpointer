@@ -10,6 +10,7 @@ describe Endpointer::Cacher do
   let(:key_name) { "#{resource.id}.yml" }
 
   let(:request_body) { "some-body" }
+  let(:response_presenter) { double(Endpointer::ResponsePresenter) }
 
   let(:tempdir) { Dir.mktmpdir }
 
@@ -17,6 +18,16 @@ describe Endpointer::Cacher do
 
   before do
     allow(Endpointer::CacheKeyResolver).to receive(:new).and_return(cache_key_resolver)
+    allow(Endpointer::ResponsePresenter).to receive(:new).and_return(response_presenter)
+
+    allow(response_presenter).to receive(:present).with(
+      status: response.code,
+      body: response.body,
+      headers: response.headers,
+      request_body: request_body,
+      resource: resource
+    ).and_return(response)
+
     allow(cache_key_resolver).to receive(:get_key).with(resource, request_body).and_return(key_name)
   end
 

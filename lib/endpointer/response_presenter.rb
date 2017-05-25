@@ -1,10 +1,11 @@
+require 'endpointer/response_substitutioner'
 module Endpointer
   class ResponsePresenter
 
-    def present(status: , body: , headers: )
+    def present(status: , body: , headers: , request_body: , resource: )
       Response.new(
         status,
-        body,
+        substituted_body(request_body, body, resource),
         sanitise_headers(uglify_headers(headers))
       )
     end
@@ -22,6 +23,10 @@ module Endpointer
       headers.reject {|header, _|
         header.match(/TRANSFER-ENCODING/)
       }
+    end
+
+    def substituted_body(request_body, response_body, resource)
+      Endpointer::ResponseSubstitutioner.new.substitute(request_body, response_body, resource.substitutions)
     end
 
   end

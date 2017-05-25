@@ -13,6 +13,12 @@ describe Endpointer::ResourceParser do
 
   let(:matchers) { { "matcher_id" => "someregex" } }
 
+  let(:substitutions) do
+    [
+      { 'from_request' => 'someregex', 'to_response' => 'someregex' }
+    ]
+  end
+
   describe'#parse'do
     let(:resource_config) do
       JSON.generate(
@@ -28,7 +34,8 @@ describe Endpointer::ResourceParser do
           method: :post,
           url: url2,
           headers: header2,
-          matchers: matchers
+          matchers: matchers,
+          substitutions: substitutions
         }
       ]
       )
@@ -46,6 +53,7 @@ describe Endpointer::ResourceParser do
       expect(result.last.url).to eq(url2)
       expect(result.last.headers).to eq(header2)
       expect(result.last.matchers).to eq(matchers)
+      expect(result.last.substitutions).to eq(substitutions)
     end
 
     context 'when the resource config is invalid' do

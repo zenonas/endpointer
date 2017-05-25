@@ -40,7 +40,15 @@ In order to use Endpointer you need to create a JSON configuration file with the
     },
     "matchers": {
       "matcher-id": "some regex"
-    }
+    },
+    "substitutions": [
+      {
+        "from_request": "Some regex with a named matcher called match (?<match\\w+)",
+        "to_response": "Some regex with a named matcher called match (?<match\\w+)",
+      },
+      ...
+    ],
+
   },
   ...
 ]
@@ -93,6 +101,10 @@ If the request is to be executed against the real service the headers defined in
 
 Endpointer now supports custom matchers with the goal to give you more fine grained control of what gets cached. This allows you to cache different requests using a regex separately. You just define your resource with its custom matchers as shown above. Endpointer will then attempt to match the regex against the request body and store the response separately if it matches. If no matcher matches it will default to the default cache key for the resource(resource id).
 
+### Substitutions
+
+Endpointer can take a list of regexes to copy values from the request and replace into the response. This is particularly useful if your use case needs a cached response that needs different values based on the request.
+
 ### Caching
 
 By default endpointer will use your operating system's temp directory to store its cache files `(TMP_DIR/endpointer_cache)`. In order to configure the cache path you need to pass the `--cache-dir=<path>` argument.
@@ -119,6 +131,7 @@ As mentioned above I'm actively going to work on improving endpointer and the fo
 * A `--debug` flag to the command line that will give a pry window on every request allowing you to play with the Request and Response objects.
 * Configurable port(this can already be done if using config.ru)
 * Support multiple key/value stores for caching. Currently only uses local YAML files. One Suggestion is Redis support.
+* Support response manipulator plugins that can pre-process responses
 
 ## License
 

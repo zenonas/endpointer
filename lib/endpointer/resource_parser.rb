@@ -5,7 +5,7 @@ module Endpointer
   class ResourceParser
     def parse(resource_config)
       parse_config(resource_config).map do |resource|
-        Resource.new(resource["id"], resource["method"].to_sym, resource["url"], resource["headers"], resource["matchers"])
+        Resource.new(resource["id"], resource["method"].to_sym, resource["url"], resource["headers"], resource["matchers"], resource["substitutions"])
       end
     end
 
